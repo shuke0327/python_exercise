@@ -1,0 +1,103 @@
+#!usr/bin/env python
+# -*- coding: utf-8 -*-
+# title: marketsim.py
+# usage:
+# python maketsim.py 100000000 orders.csv values.csv
+
+hw3的指导：
+市场模拟器任务：
+前提： order已经存在；已知初始资本； 
+
+1. 从order.csv中，读取交易命令（构成为：时间，symbol，数量），保存在数据结构中
+2. 分析数据结构中所得到的记录，分离出来相应的指令
+3. 对每一条指令，获得其symbol所对应的股票在相应的时间的收盘价（用adjusted close price表示），然后用数量*价格，得到资本总量。
+如何用qstk得到收盘价？
+用hw2中的结果？
+
+
+4. 将每条指令所获得的结果，保存在一个数据结构中。
+5. 当所有的数据处理结束后，写入到一个csv文件中：value.csv
+6. 关闭文件，返回提示，已经处理完毕。
+
+
+官方指南：
+1. read csv into "trades" array
+build list of symbols
+build data 	boundaries
+
+
+
+2. scan trades for symbols and dates
+3. read in data
+read in using data boundaries
+read all symbols 
+focus on adjust close
+
+4. scan trades to update cash
+5. scan trades to 	create ownership array & value
+6. scan cash and value to create total fund value
+
+具体的实现：
+在qstk中，有一个simulator的文件，包含了一个实现。如何使用？
+
+用pandas读取csv文件：
+ pandas.io.parsers.read_csv(filepath_or_buffer, sep=', ', dialect=None, header=0, index_col=None, names=None, skiprows=None, na_values=None, keep_default_na=True, thousands=None, comment=None, parse_dates=False, keep_date_col=False, dayfirst=False, date_parser=None, nrows=None, iterator=False, chunksize=None, skip_footer=0, converters=None, verbose=False, delimiter=None, encoding=None, squeeze=False, **kwds)
+ 
+ 返回结果为：
+ 
+2011   1  10  AAPL   Buy  1500  Unnamed: 6
+0   2011   1  13  AAPL  Sell  1500         NaN
+1   2011   1  13   IBM   Buy  4000         NaN
+2   2011   1  26  GOOG   Buy  1000         NaN
+3   2011   2   2   XOM  Sell  4000         NaN
+4   2011   2  10   XOM   Buy  4000         NaN
+5   2011   3   3  GOOG  Sell  1000         NaN
+6   2011   3   3   IBM  Sell  2200         NaN
+7   2011   6   3   IBM  Sell  3300         NaN
+8   2011   5   3   IBM   Buy  1500         NaN
+9   2011   6  10  AAPL   Buy  1200         NaN
+10  2011   8   1  GOOG   Buy    55         NaN
+11  2011   8   1  GOOG  Sell    55         NaN
+12  2011  12  20  AAPL  Sell  1200         NaN
+如何处理？
+
+
+或者，用如下方式读入csv数据：
+import numpy as np
+portfolio = np.loadtxt('tutorial5portfolio.csv',
+        dtype='S5,f4',
+        delimiter=',',
+        comments='#',
+        skiprows=1,
+        )
+
+需要仔细学习qstk的文档，获得问题的解答。应当不是难事。明日继续。
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,78 @@
+# Part 2: Create a portfolio analysis tool, analyze.py, that takes a command line like this:
+
+# python analyze.py values.csv $SPX
+
+The tool should read in the daily values (cumulative portfolio value) from values.csv and plot them. It should use the symbol on the command line as a benchmark for comparison (in this case $SPX). Using this information, analyze.py should:
+
+Plot the price history over the trading period.
+Print out measures of the portfolio and the benchmark of:
+        Sharpe Ratio
+        Total Return
+        Standard deviation of daily return 
+所需要的模块
+0. unpack argv
+   from sys import argv
+   
+   
+   
+   
+1. 读取csv文件
+   import numpy as nu
+   usage:
+   take out the date and value information
+   stored at datelist and totalvalue array
+
+2. 计算参考值
+   三个参数： sharpe Ratio，Total return， Standard deviation of daily return
+   两个维度： 基金；$SPY
+   如何计算sharpe ratio？？
+   
+   如何计算total return：
+   
+   如何计算stdv：
+   
+   
+portrets = sum(rets*portalloc,axis=1)
+porttot = cumprod(portrets+1)
+componenttot = cumprod(rets+1,axis=0) # compute returns for components
+   
+   
+3. 获取SPY的信息
+   DataAccess 
+   
+   l_symbols = ['$SPX']
+
+        #Get desired timestamps
+        timeofday = dt.timedelta(hours = 16)
+        ldt_timestamps = du.getNYSEdays(startday, endday, timeofday)
+
+        dataobj = da.DataAccess('Norgate')
+        self.df_close = dataobj.get_data( \
+                        ldt_timestamps, l_symbols, "close", verbose=True)
+   
+4. 绘图
+#
+# Plot the result
+#
+plt.clf()
+fig = plt.figure()
+fig.add_subplot(111)
+plt.plot(timestamps,componenttot,alpha=0.4)
+plt.plot(timestamps,porttot)
+names = portsyms
+names.append('portfolio')
+plt.legend(names)
+plt.ylabel('Cumulative Returns')
+plt.xlabel('Date')
+fig.autofmt_xdate(rotation=45)
+savefig('tutorial3.pdf',format='pdf')
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   

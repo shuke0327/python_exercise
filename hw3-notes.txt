@@ -1,0 +1,161 @@
+0. 处理命令行的参数
+from sys import argv
+
+totalfund  = argv[1]
+csvfile    = argv[2]
+outputfile = argv[3]
+ 
+ 
+
+
+1. 处理csv类型数据所用的模块numpy的资料
+src： qstk3.py
+
+orders.csv文档的构成：
+
+
+
+import matplotlib.pyplot as plt           #绘图用
+from pylab import *                       #计算用  
+from qstkutil import DataAccess as da     #获取数据用  
+from qstkutil import qsdateutil as du     #暂时未知 
+from qstkutil import tsutil as tsu     
+import datetime as dt                     #处理日期用 
+import numpy    as nu                     #处理csv文件，数据格式等
+
+portfolio = nu.loadtxt(filepath,dtype='S5,f4',
+			delimiter=',',
+			comments ='#',
+			skiprows = 1,
+			)
+
+portfolio = sorted(portfolio,key=lambda x: x[0])
+
+
+#param: portsyms:  contains the symbols.
+#param: portalloc: contains the allocation ratio.
+portsyms  = []
+portalloc = []
+for i in portfolio:                                #portfolio is a list object
+	portsyms.append(i[0])
+	portalloc.append(i[1])
+
+2. 如何输出csv文档：
+a = formated_result
+np.savetxt('output.csv',a)
+
+
+3. 如何读取交易信息
+   storename = 'Yahoo'
+   timeofday=dt.timedelta(hours=16)
+   endday = dt.datetime(2011,1,1)
+   startday = dt.datetime(2009,1,1)
+   timestamps = du.getNYSEdays(startday,endday,timeofday)
+   dataobj = da.DataAccess(storename)
+   # Reading the Data
+   close = dataobj.get_data(timestamps, symbols, closefield)
+   
+4. 现金计算
+   按照hw3-design文件中的伪代码进行
+   资产计算没有那么容易。因为设计思路出现问题，只是按照orders.csv表格中的顺序进行资产的确定并不能行，
+   要给出每一天的总资产值。还是要按照timestamps中的各个顺序来完成。
+   对于迭代器的使用，还要更多的理解才行。
+
+5. 如何构造输出数据
+   探索pandas中的DataFrame数据格式。构造输出数据。
+   已知：得到的date数据，为timeseries格式，而对应的totalvalue为float。
+   result的构造，为了转换为csv起见，应该为：
+   不过，似乎用numpy.ndarray更合适。因为使用np.loadtxt得到的结果类型为ndarray类型。
+   下一步，熟悉如何构造ndarray
+   
+ first mode:
+   >>> np.ndarray(shape=(2,2), dtype=float, order='F')
+ |  array([[ -1.13698227e+002,   4.25087011e-303],
+ |         [  2.88528414e-306,   3.27025015e-309]])         #random
+ |  
+ |  Second mode:
+ |  
+ |  >>> np.ndarray((2,), buffer=np.array([1,2,3]),
+ |  ...            offset=np.int_().itemsize,
+ |  ...            dtype=int) # offset = 1*itemsize, i.e. skip first element
+ |  array([2, 3])
+
+可以使用下面的方式，来保存返回的内容：
+   numpy.savetxt():
+   savetxt(fname, X, fmt='%.18e', delimiter=' ', newline='\n')
+   Save an array to a text file.   
+   
+   
+   
+   
+   
+   
+   
+   
+   
+   可以用这样的方式构造返回数据：
+   a = timestamps[1] or a = date 
+   #date为dt.datetime格式
+   
+   result=[]
+   b=[a.year,a.month,a.day]
+   b.append(totalfund)   
+   result.append(b)
+   然后返回result，保存到csv文件中。但是仍然需要调整格式，避免出现状况。
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+1. csv及数据结构
+如何处理'pandas.core.frame.DataFrame‘格式的数据？
+根据在R语言之中的经验，DataFrame是一个类似矩阵的东东。
+
+如何读取csv数据，并进行处理？
+用pandas包读取csv之后，所得到的数据类型为'pandas.core.frame.DataFrame’，
+也可以用numpy包读取csv文件：
+
+QSTK Tutorial 2
+示例文件： ~/QSTK/Examples/Basic/example-data.csv
+#内容格式：
+
+Year,Month,Day,SPY,XOM,GOOG,GLD
+2008,1,2,137.67,87.81,685.19,84.86
+2008,1,3,137.6,88.11,685.33,85.57
+2008,1,4,134.23,86.47,657,85.13
+2008,1,7,134.11,85.66,649.25,84.77
+2008,1,8,131.95,84.56,631.68,86.78
+2008,1,9,133.34,85.98,653.2,86.55
+2008,1,10,134.21,86.08,646.73,88.25
+
+example: use for read in the reading-history of my campus period.
+
+QSTK Tutorial 3
+
+
+The date (timestamp) for each row of data is in the first three columns, and the adjusted closing price for four equities is listed in the remaining columns. The symbols of the corresponding equities are along the top row. 
+
